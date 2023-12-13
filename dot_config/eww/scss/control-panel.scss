@@ -1,0 +1,33 @@
+.control-panel {
+    &:active {
+        border-bottom: 2px solid $teal;
+    }
+
+    &:hover {
+        border-bottom: 2px solid $teal;
+    }
+
+    .network {
+        color: $mauve;
+    }
+
+    .volume {
+        color: $teal;
+    }
+
+    .microphone {
+        color: $maroon;
+    }
+
+    .battery {
+        color: $lavender;
+    }
+}
+
+.control-panel.active {
+    border-bottom: 2px solid $teal;
+}
+
+.volume {
+    font-size: 1.2em;
+}

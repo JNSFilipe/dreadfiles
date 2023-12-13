@@ -1,0 +1,34 @@
+.calendar {
+    background: $background;
+    border: 2px solid $teal;
+    border-radius: $rounded-large;
+    color: $text;
+
+    calendar {
+
+        &:selected {
+            background: $teal;
+            color: $background;
+            border-radius: $rounded-large;
+
+        }
+
+        &.header {
+            color: $text;
+        }
+
+        &.highlight {
+            background-color: transparent;
+            color: $green;
+        }
+
+        &:indeterminate {
+            color: $surface1;
+        }
+
+        font-size: 1.3em;
+        padding: .2em;
+    }
+
+    padding: 1em;
+}

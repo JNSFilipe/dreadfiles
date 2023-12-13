@@ -1,0 +1,126 @@
+.system {
+    background: $background;
+    border: 2px solid $teal;
+    border-radius: $rounded-large;
+    padding: 1em;
+
+    .muted {
+        background: $mantle;
+        padding: 1em;
+        border-radius: $rounded-large;
+    }
+
+    .syslevels {
+        padding: 1em 0;
+
+        box {
+            min-width: 4em;
+            min-height: 4em;
+
+            label {
+                font-size: 1.4em;
+            }
+        }
+    }
+}
+
+.volume {
+    .sicon {
+        color: $teal;
+    }
+}
+
+.brightness {
+    .sicon {
+        color: $peach;
+    }
+}
+
+.sys .prog {
+
+    &.cpu {
+        color: $sapphire;
+    }
+
+    &.ram {
+        color: $yellow;
+    }
+
+    &.temp {
+        color: $maroon;
+    }
+
+    &.battery {
+        color: $lavender;
+    }
+
+    background: $background;
+
+    label {
+        color: $text;
+    }
+}
+
+.sysslider {
+
+
+    scale trough {
+        background-color: $background;
+        border-radius: 10px;
+        min-height: 14px;
+
+        highlight {
+            border-radius: 10px;
+        }
+    }
+}
+
+.volume scale trough highlight {
+    background: $teal;
+}
+
+.brightness scale trough highlight {
+    background: $peach;
+}
+
+.sicon {
+    min-width: 30px;
+}
+
+.brightness .sicon {
+    font-size: 1.3em;
+}
+
+.pval {
+    font-size: 1.4em;
+}
+
+.val {
+    min-width: 55px;
+}
+
+
+.arrowbutton {
+    background: $background;
+    border-radius: $rounded-large;
+
+    &.wifi.active {
+        background: $mauve;
+    }
+
+    &.blue.active {
+        background: $blue;
+    }
+
+    &.mic.active {
+        background: $red;
+    }
+
+    .eventbox {
+
+        .label {
+            border-radius: 24px;
+            padding: .75em .15em;
+        }
+    }
+}

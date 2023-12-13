@@ -1,0 +1,7 @@
+README.md
+{{- if eq .chezmoi.os "darwin" }}
+.config/hypr # only manage .work on work-laptop
+.config/eww 
+.config/picom
+.config/rofi
+{{- end }}

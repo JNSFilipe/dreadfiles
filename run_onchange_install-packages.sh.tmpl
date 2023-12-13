@@ -1,0 +1,49 @@
+#!/bin/sh
+
+{{ if eq .chezmoi.osRelease.idLike "arch" -}}
+sudo pacman -S --noconfirm ripgrep
+sudo pacman -S --noconfirm fzf
+sudo pacman -S --noconfirm zoxide
+sudo pacman -S --noconfirm tmux
+sudo pacman -S --noconfirm eza
+sudo pacman -S --noconfirm jq
+sudo pacman -S --noconfirm brightnessctl
+sudo pacman -S --noconfirm acpi
+sudo pacman -S --noconfirm picom
+sudo pacman -S --noconfirm rofi
+sudo pacman -S --noconfirm hyprland
+sudo pacman -S --noconfirm hyprpaper
+yay -SYg otf-material-icons-git
+yay -SYg eww-tray-wayland
+yay -SYg blueberry-wayland
+{{ else if eq .chezmoi.os "darwin" -}}
+brew install ripgrep
+brew install fzf
+brew install zoxide
+brew install eza
+brew install jq
+brew install tmux
+brew install oh-my-posh
+brew install koekeishiya/formulae/yabai
+{{ end -}}
+
+
+# Install fzf-tab-completion
+FZF_PATH_COMPLETION_DIR="~/.config/fzf-tab-completion"
+if [ ! -d "${FZF_PATH_COMPLETION_DIR}" ]; then
+	git clone https://github.com/lincheney/fzf-tab-completion.git ${FZF_PATH_COMPLETION_DIR}
+fi
+
+
+# Install TPM
+TPM_DIR="~/.tmux/plugins/tpm"
+if [ ! -d "${TPM_DIR}" ]; then
+	git clone --quiet https://github.com/tmux-plugins/tpm ${TPM_DIR}
+fi
+
+
+# Install wallpapers
+WALLPAPERS_DIR="~/.config/wallpapes"
+if [ ! -d "${WALLPAPERS_DIR}" ]; then
+	git clone --quiet https://github.com/Gingeh/wallpapers.git ${WALLPAPERS_DIR}
+fi

@@ -1,61 +1,57 @@
 .bar {
-    padding: .5em 1.5em;
-    border-radius: 16px;
-    color: $text;
-    margin: .5em 1em 0;
-    background: $background;
+  padding: 0.5em 1.5em;
+  border-radius: 16px;
+  color: $text;
+  margin: 0.5em 1em 0;
+  background: $background;
 
-    .separator {
-        color: $overlay1;
-    }
+  .separator {
+    color: $overlay1;
+  }
 
-    .menu {
-        font-size: 1.5em;
-        color: $blue;
-    }
+  .menu {
+    font-size: 1.5em;
+    color: $blue;
+  }
 
-    .workspaces {
-
-        & box button label {
-
-            &.active {
-                color: $text;
-            }
-        }
-    }
-
-    .screenshot {
-        color: $yellow;
-    }
-
-    .colorpicker {
-        color: $sky;
-    }
-
-    .datetime {
+  .workspaces {
+    & box button label {
+      &.active {
         color: $text;
-
-        &:hover {
-            border-bottom: 2px solid $teal;
-        }
+      }
     }
+  }
 
-    .datetime.active {
-        border-bottom: 2px solid $teal;
+  .screenshot {
+    color: $yellow;
+  }
+
+  .colorpicker {
+    color: $sky;
+  }
+
+  .datetime {
+    color: $text;
+
+    &:hover {
+      border-bottom: 2px solid $teal;
     }
+  }
+
+  .datetime.active {
+    border-bottom: 2px solid $teal;
+  }
 }
 
 label {
-    font-size: 1.2em;
+  font-size: 1.2em;
 }
 
 .menu_icon {
-    box {
-        min-width: 3em;
-        background-size: contain;
-        background-repeat: no-repeat;
-        background-position: center center;
-        background-image: url($icons+'arch_silver.svg');
-    }
-
+  box {
+    min-width: 3em;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+  }
 }

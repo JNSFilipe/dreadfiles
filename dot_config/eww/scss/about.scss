@@ -1,36 +1,34 @@
 .about {
-    background: $background-base;
-    color: $text-base;
+  background: $background;
+  color: $text;
+  border-radius: $rounded-large;
+  border: 1px solid $subtext0;
+
+  .top {
+    padding: 1em;
+
+    label {
+      margin-left: 2em;
+    }
+  }
+
+  .info {
     border-radius: $rounded-large;
-    border: 1px solid $text-inverse;
+    margin: 1em;
+    padding: 1em;
+    background: $background-alt;
 
-    .top {
-        padding: 1em;
-
-        label {
-            margin-left: 2em;
-        }
+    box {
+      .s {
+        padding: 0.5em;
+      }
     }
-
-    .info {
-        border-radius: $rounded-large;
-        margin: 1em;
-        padding: 1em;
-        background: $background-muted;
-
-        box {
-
-            .s {
-                padding: .5em;
-            }
-        }
-    }
+  }
 }
 
 .os-logo {
-    padding: 5em;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: contain;
-    background-image: url($icons+'arch.svg');
+  padding: 5em;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
 }

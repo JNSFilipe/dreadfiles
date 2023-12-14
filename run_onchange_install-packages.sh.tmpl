@@ -1,5 +1,6 @@
 #!/bin/sh
 
+{{ if eq .chezmoi.os "linux" -}}
 {{ if eq .chezmoi.osRelease.idLike "arch" -}}
 sudo pacman -S --noconfirm ripgrep
 sudo pacman -S --noconfirm fzf
@@ -13,9 +14,11 @@ sudo pacman -S --noconfirm picom
 sudo pacman -S --noconfirm rofi
 sudo pacman -S --noconfirm hyprland
 sudo pacman -S --noconfirm hyprpaper
+sudo pacman -S --noconfirm wezterm
 yay -SYg otf-material-icons-git
 yay -SYg eww-tray-wayland
 yay -SYg blueberry-wayland
+{{ end -}}
 {{ else if eq .chezmoi.os "darwin" -}}
 brew install ripgrep
 brew install fzf
@@ -25,6 +28,13 @@ brew install jq
 brew install tmux
 brew install oh-my-posh
 brew install koekeishiya/formulae/yabai
+brew install koekeishiya/formulae/skhd
+brew install --cask wezterm
+
+skhd --stop-service
+skhd --start-service
+yabai --stop-service
+yabai --start-service
 {{ end -}}
 
 

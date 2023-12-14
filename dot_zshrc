@@ -2,6 +2,7 @@
 if [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
   eval "$(oh-my-posh init zsh --config ~/.config/bash_theme.omp.json)"
 fi
+# TODO: Make a simple prompt for apple terminal and warp
 
 # Setup zsh history
 HISTFILE=~/.zsh_history

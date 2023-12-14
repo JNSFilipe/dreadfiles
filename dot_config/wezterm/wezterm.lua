@@ -16,7 +16,7 @@ config.use_fancy_tab_bar = false
 config.window_padding = { left = 3, right = 0, top = 3, bottom = 0 }
 
 -- Set zsh as starting program
-config.default_prog = { "/usr/bin/zsh" }
+config.default_prog = { "zsh" }
 
 -- Circunvent bug, reported in https://github.com/wez/wezterm/issues/4483#issuecomment-1835619115
 config.enable_wayland = false

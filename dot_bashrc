@@ -1,7 +1,9 @@
 # bashrc
 
 # Load Oh My Posh
-eval "$(oh-my-posh init bash --config ~/.config/bash_theme.omp.json)"
+if [ ! "$(uname)" == "Darwin" ]; then
+    eval "$(oh-my-posh init bash --config ~/.config/bash_theme.omp.json)"
+fi
 
 [[ $- != *i* ]] && return
 

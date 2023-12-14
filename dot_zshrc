@@ -4,6 +4,13 @@ if [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
 fi
 # TODO: Make a simple prompt for apple terminal and warp
 
+# Check if it is linux to add Homebrew to path
+if [  -n "$(uname -a | grep Ubuntu)" ]; then
+    test -d ~/.linuxbrew && eval "$(~/.linuxbrew/bin/brew shellenv)"
+    test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+    eval "\$($(brew --prefix)/bin/brew shellenv)"
+fi
+
 # Setup zsh history
 HISTFILE=~/.zsh_history
 HISTSIZE=100000

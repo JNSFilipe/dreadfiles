@@ -18,6 +18,18 @@ sudo pacman -S --noconfirm wezterm
 yay -SYg otf-material-icons-git
 yay -SYg eww-tray-wayland
 yay -SYg blueberry-wayland
+{{ else if .chezmoi.osRelease.idLike "debian" -}}
+# install Homebrew
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+brew install ripgrep
+brew install fzf
+brew install zoxide
+brew install eza
+brew install jq
+brew install tmux
+brew install oh-my-posh
+brew install --cask wezterm
 {{ end -}}
 {{ else if eq .chezmoi.os "darwin" -}}
 brew install ripgrep

@@ -5,6 +5,13 @@ if [ ! "$(uname)" == "Darwin" ]; then
     eval "$(oh-my-posh init bash --config ~/.config/bash_theme.omp.json)"
 fi
 
+# Check if it is linux to add Homebrew to path
+if [  -n "$(uname -a | grep Ubuntu)" ]; then
+    test -d ~/.linuxbrew && eval "$(~/.linuxbrew/bin/brew shellenv)"
+    test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+    eval "\$($(brew --prefix)/bin/brew shellenv)"
+fi
+
 [[ $- != *i* ]] && return
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash

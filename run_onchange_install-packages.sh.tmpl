@@ -18,7 +18,7 @@ sudo pacman -S --noconfirm wezterm
 yay -SYg otf-material-icons-git
 yay -SYg eww-tray-wayland
 yay -SYg blueberry-wayland
-{{ else if .chezmoi.osRelease.idLike "debian" -}}
+{{ else if eq .chezmoi.osRelease.idLike "debian" -}}
 # install Homebrew
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 

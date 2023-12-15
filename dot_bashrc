@@ -1,7 +1,10 @@
 # bashrc
 
-# Load Oh My Posh
-if [ ! "$(uname)" == "Darwin" ]; then
+# Define simpler shell, case oh-my-posh is not found
+if [ ! command -v oh-my-posh &> /dev/null ] || [ "$TERM_PROGRAM" == "Apple_Terminal" ]; then
+    PS1='\n\[\e[36m\](\[\e[93;2m\]\s\[\e[0;36m\]) (\[\e[91;1m\]\u\[\e[22m\]@\[\e[1m\]\H\[\e[0;36m\]) (\[\e[94;1m\]\w\[\e[0;36m\]) (\[\e[35;2m\]$(git branch 2>/dev/null | grep '"'"'*'"'"' | colrm 1 2)\[\e[0;36m\])\n\[\e[1m\]λ \[\e[0m\]'
+else
+    # Load Oh My Posh
     eval "$(oh-my-posh init bash --config ~/.config/bash_theme.omp.json)"
 fi
 

@@ -5,3 +5,8 @@ README.md
 .config/picom
 .config/rofi
 {{- end }}
+
+{{- if eq .chezmoi.os "linux" }}
+.config/yabai
+.config/skhd
+{{- end }}

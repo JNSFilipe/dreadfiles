@@ -1,5 +1,10 @@
 # bashrc
 
+# Define util functions
+command_exists () {
+    type "$1" &> /dev/null ;
+}
+
 # Define simpler shell, case oh-my-posh is not found
 PS1='\n\[\e[36m\](\[\e[93;2m\]\s\[\e[0;36m\]) (\[\e[91;1m\]\u\[\e[22m\]@\[\e[1m\]\H\[\e[0;36m\]) (\[\e[94;1m\]\w\[\e[0;36m\]) (\[\e[35;2m\]$(git branch 2>/dev/null | grep '"'"'*'"'"' | colrm 1 2)\[\e[0;36m\])\n\[\e[1m\]λ \[\e[0m\]'
 
@@ -54,6 +59,6 @@ bind -x '"\t": fzf_bash_completion'
 . "$HOME/.cargo/env"
 
 # Check if zsh and oh-my-posh exist
-if [ command -v zsh &> /dev/null ] && [ command -v oh-my-posh &> /dev/null ]; then
+if command_exists zsh && command_exists oh-my-posh; then
     zsh
 fi

@@ -1,12 +1,5 @@
-# Define simpler shell, case oh-my-posh is not found
-if [ ! command -v oh-my-posh &> /dev/null ] || [ "$TERM_PROGRAM" == "Apple_Terminal" ]; then
-    PS1='\n\[\e[36m\](\[\e[93;2m\]\s\[\e[0;36m\]) (\[\e[91;1m\]\u\[\e[22m\]@\[\e[1m\]\H\[\e[0;36m\]) (\[\e[94;1m\]\w\[\e[0;36m\]) (\[\e[35;2m\]$(git branch 2>/dev/null | grep '"'"'*'"'"' | colrm 1 2)\[\e[0;36m\])\n\[\e[1m\]λ \[\e[0m\]'
-else
-    # Load Oh My Posh
-    eval "$(oh-my-posh init zsh --config ~/.config/bash_theme.omp.json)"
-fi
-
-
+# Load Oh My Posh
+eval "$(oh-my-posh init zsh --config ~/.config/bash_theme.omp.json)"
 
 # Check if it is linux to add Homebrew to path
 if [  -n "$(uname -a | grep Ubuntu)" ]; then
@@ -60,15 +53,11 @@ alias ll='eza --icons -al'
 alias lsg='eza --icons -D'
 alias lag='eza --icons -AD'
 alias llg='eza --icons -alD'
-alias wal="feh --bg-fill"
 alias ww='wget'
-alias ree='redshift -P -O 3500'
 alias vi='nvim'
 alias vim='nvim'
 alias del='sudo rm -r'
 alias comp='sudo make install'
 alias gl='git clone'
-# alias update='sudo apt update && sudo apt upgrade'
-# alias instal='sudo apt install'
 
 . "$HOME/.cargo/env"

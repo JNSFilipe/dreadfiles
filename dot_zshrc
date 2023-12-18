@@ -41,9 +41,9 @@ PATH=$PATH:~/.local/bin
 PATH=$PATH:~/.cargo/bin
 PATH=$PATH:~/Scripts
 
-# If not within tmux, bind ctrl+f to session starter
+# If not within tmux, bind ctrl+Space to session starter
 if [ -z "$TMUX" ]; then
-    bindkey -s "^f" "zzz\n"
+    bindkey -s "^ " "zzz\n"
 fi
 
 # Alias

@@ -50,21 +50,23 @@ yabai --start-service
 
 
 # Install fzf-tab-completion
-FZF_PATH_COMPLETION_DIR="~/.config/fzf-tab-completion"
+FZF_PATH_COMPLETION_DIR="${HOME}/.config/fzf-tab-completion"
 if [ ! -d "${FZF_PATH_COMPLETION_DIR}" ]; then
-	git clone https://github.com/lincheney/fzf-tab-completion.git ${FZF_PATH_COMPLETION_DIR}
+	git clone --quiet https://github.com/lincheney/fzf-tab-completion.git ${FZF_PATH_COMPLETION_DIR}
 fi
 
 
 # Install TPM
-TPM_DIR="~/.tmux/plugins/tpm"
+TPM_DIR="${HOME}/.tmux/plugins/tpm"
 if [ ! -d "${TPM_DIR}" ]; then
 	git clone --quiet https://github.com/tmux-plugins/tpm ${TPM_DIR}
 fi
 
 
 # Install wallpapers
-WALLPAPERS_DIR="~/.config/wallpapes"
+WALLPAPERS_DIR="${HOME}/.config/wallpapes"
 if [ ! -d "${WALLPAPERS_DIR}" ]; then
 	git clone --quiet https://github.com/Gingeh/wallpapers.git ${WALLPAPERS_DIR}
 fi
+
+echo "HELLOOOOOOO MTFFFFFFF"

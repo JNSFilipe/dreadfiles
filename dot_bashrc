@@ -1,12 +1,7 @@
 # bashrc
 
 # Define simpler shell, case oh-my-posh is not found
-if [ ! command -v oh-my-posh &> /dev/null ] || [ "$TERM_PROGRAM" == "Apple_Terminal" ]; then
-    PS1='\n\[\e[36m\](\[\e[93;2m\]\s\[\e[0;36m\]) (\[\e[91;1m\]\u\[\e[22m\]@\[\e[1m\]\H\[\e[0;36m\]) (\[\e[94;1m\]\w\[\e[0;36m\]) (\[\e[35;2m\]$(git branch 2>/dev/null | grep '"'"'*'"'"' | colrm 1 2)\[\e[0;36m\])\n\[\e[1m\]λ \[\e[0m\]'
-else
-    # Load Oh My Posh
-    eval "$(oh-my-posh init bash --config ~/.config/bash_theme.omp.json)"
-fi
+PS1='\n\[\e[36m\](\[\e[93;2m\]\s\[\e[0;36m\]) (\[\e[91;1m\]\u\[\e[22m\]@\[\e[1m\]\H\[\e[0;36m\]) (\[\e[94;1m\]\w\[\e[0;36m\]) (\[\e[35;2m\]$(git branch 2>/dev/null | grep '"'"'*'"'"' | colrm 1 2)\[\e[0;36m\])\n\[\e[1m\]λ \[\e[0m\]'
 
 # Check if it is linux to add Homebrew to path
 if [  -n "$(uname -a | grep Ubuntu)" ]; then
@@ -18,9 +13,6 @@ fi
 [[ $- != *i* ]] && return
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
-
-# Init zoxide
-eval "$(zoxide init bash)"
 
 # Ignore case in autocompletiion
 bind 'set completion-ignore-case on'
@@ -35,15 +27,7 @@ HISTSIZE=
 HISTFILESIZE=
 
 # my aliases
-alias ls='logo-ls'
-alias la='logo-ls -A'
-alias ll='logo-ls -al'
-alias lsg='logo-ls -D'
-alias lag='logo-ls -AD'
-alias llg='logo-ls -alD'
-alias wal="feh --bg-fill"
 alias ww='wget'
-alias ree='redshift -P -O 3500'
 alias vi='nvim'
 alias vim='nvim'
 alias del='sudo rm -r'
@@ -68,4 +52,8 @@ source "$HOME/.config/fzf-tab-completion/bash/fzf-bash-completion.sh"
 bind -x '"\t": fzf_bash_completion'
 
 . "$HOME/.cargo/env"
-zsh
+
+# Check if zsh and oh-my-posh exist
+if [ command -v zsh &> /dev/null ] && [ command -v oh-my-posh &> /dev/null ]; then
+    zsh
+fi

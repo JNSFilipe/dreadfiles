@@ -1,17 +1,30 @@
 #!/bin/bash
 
-# List all tmux sessions and use fzf to select one
-selected_session=$(tmux list-sessions -F '#S' | fzf)
+# List all tmux sessions and use fzf to select or input one
+# The --print-query option prints the entered text as the first line
+selected_session=$(tmux list-sessions -F '#S' 2>/dev/null | fzf --print-query)
 
-# Check if a session was selected
+# The first line of output is the input text (new or existing session name)
+session_name=$(head -n 1 <<<"$selected_session")
+
+# The second line of output is the selected session, if any
+selected_session=$(sed -n 2p <<<"$selected_session")
+
+# Check if an existing session was selected
 if [ -n "$selected_session" ]; then
 	if [[ -z $TMUX ]]; then
 		# If not within tmux, attach
-		tmux attach -t $selected_session
+		tmux attach -t "$selected_session"
 	else
 		# If within tmux, switch
-		tmux switch-client -t $selected_session
+		tmux switch-client -t "$selected_session"
 	fi
 else
-	echo "No session selected."
+	# No existing session was selected, so create a new session with the input name
+	if [ -n "$session_name" ]; then
+		tmux new-session -d -s "$session_name"
+		tmux switch-client -t "$session_name"
+	else
+		echo "No session name provided. Exiting."
+	fi
 fi

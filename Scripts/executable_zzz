@@ -19,6 +19,8 @@ fi
 session_name=$(basename "$selected_project")
 # Remove white spaces
 session_name="${session_name// /}"
+# Remove dots
+session_name="${session_name/./-}"
 # Delete rest of the name after (, {, [
 session_name=${session_name%%(*}
 session_name=${session_name%%\{*}

@@ -69,4 +69,16 @@ if [ ! -d "${WALLPAPERS_DIR}" ]; then
 	git clone --quiet https://github.com/Gingeh/wallpapers.git ${WALLPAPERS_DIR}
 fi
 
+
+# Install neovim config
+GITHUB_PATH="${HOME}/Documents/GitHub"
+REPO_NAME="monolith.nvim"
+if [ ! -d "${GITHUB_PATH}/${REPO_NAME}" ]; then
+	mkdir -p $GITHUB_PATH
+	cd $GITHUB_PATH
+	git clone --quiet https://github.com/JNSFilipe/monolith.nvim.git
+	cd $REPO_NAME
+	./install.sh
+fi
+
 echo "Installation Completed!!!"

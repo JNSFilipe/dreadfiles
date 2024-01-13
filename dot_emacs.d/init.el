@@ -104,6 +104,17 @@
   (define-key flymake-mode-map (kbd "C-c n") #'flymake-goto-next-error)
   (define-key flymake-mode-map (kbd "C-c p") #'flymake-goto-prev-error))
 
+;; Projectile - Project Interaction Library for Emacs
+(use-package projectile
+  :ensure t
+  :init
+  (projectile-mode +1)
+  :config
+  (setq projectile-completion-system 'helm)
+  (setq projectile-indexing-method 'alien)
+  (setq projectile-project-search-path '("~/GitHub/" "~/Documents/GitHub/" "~/.local/share"))
+  (setq projectile-enable-caching t))
+
 ;; Helm - Framework for incremental completions and narrowing selections
 (use-package helm
   :ensure t
@@ -148,8 +159,15 @@
 ;; Helm-projectile
 (use-package helm-projectile
   :ensure t
+  :after (helm projectile)
   :config
   (helm-projectile-on))
+
+;; Prespective - for a "tmux session per project"-like experience
+(use-package perspective
+  :ensure t
+  :config
+  (persp-mode))
 
 ;; Magit - Git client
 (use-package magit

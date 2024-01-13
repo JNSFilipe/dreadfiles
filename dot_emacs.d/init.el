@@ -30,6 +30,29 @@
 ;; For navigating wrapped lines
 (global-visual-line-mode t)
 
+;; Enable and use relative line numbering
+(setq display-line-numbers 'relative)
+
+;; Automatically pair parentheses
+(electric-pair-mode t)
+
+;; Fonts
+(when (member "JetBrains Mono" (font-family-list))
+  (set-face-attribute 'default nil :font "JetBrains Mono-12"))
+;; Use a variable pitch, keeping fixed pitch where it's sensible
+(use-package mixed-pitch ;; For auto detecting when to use variable pitch
+  :defer t
+  :hook (text-mode . mixed-pitch-mode)
+  :config
+  (when (member "Source Serif Pro" (font-family-list))
+    (set-face-attribute 'variable-pitch nil :family "Source Serif Pro")))
+;; Pretty simbols
+(setq-default prettify-symbols-alist '(("lambda" . ?λ)
+                                       ("delta" . ?Δ)
+                                       ("gamma" . ?Γ)
+                                       ("phi" . ?φ)
+                                       ("psi" . ?ψ)))
+
 ;; Doom Themes
 (use-package doom-themes
   :ensure t
@@ -50,23 +73,6 @@
   :config
   (setq doom-modeline-height 15))
 
-;; Fonts
-(when (member "JetBrains Mono" (font-family-list))
-  (set-face-attribute 'default nil :font "JetBrains Mono-12"))
-;; Use a variable pitch, keeping fixed pitch where it's sensible
-(use-package mixed-pitch ;; For auto detecting when to use variable pitch
-  :defer t
-  :hook (text-mode . mixed-pitch-mode)
-  :config
-  (when (member "Source Serif Pro" (font-family-list))
-    (set-face-attribute 'variable-pitch nil :family "Source Serif Pro")))
-;; Pretty simbols
-(setq-default prettify-symbols-alist '(("lambda" . ?λ)
-                                       ("delta" . ?Δ)
-                                       ("gamma" . ?Γ)
-                                       ("phi" . ?φ)
-                                       ("psi" . ?ψ)))
-
 ;; A startup screen extracted from Spacemacs
 (use-package dashboard
   :config
@@ -79,37 +85,6 @@
                           (recents  . 15)
                           (bookmarks . 5)))
   (dashboard-setup-startup-hook))
-
-;; Vertico - Enable completion by narrowing
-(use-package vertico
-  :ensure t
-  :init
-  (vertico-mode t)
-  :config
-  (define-key vertico-map (kbd "RET") #'vertico-directory-enter)
-  (define-key vertico-map (kbd "DEL") #'vertico-directory-delete-word)
-  (define-key vertico-map (kbd "M-d") #'vertico-directory-delete-char))
-
-;; Consult - Extended completion utilities
-(use-package consult
-  :ensure t
-  :bind (
-         :map flymake-mode-map
-         ("C-c n" . flymake-goto-next-error)
-         ("C-c p" . flymake-goto-prev-error))
-  :config
-  (setq read-buffer-completion-ignore-case t
-        read-file-name-completion-ignore-case t
-        completion-ignore-case t))
-(global-set-key [rebind switch-to-buffer] #'consult-buffer)
-(global-set-key (kbd "C-c j") #'consult-line)
-(global-set-key (kbd "C-c i") #'consult-imenu)
-
-;; Enable line numbering in `prog-mode'
-(add-hook 'prog-mode-hook #'display-line-numbers-mode)
-
-;; Automatically pair parentheses
-(electric-pair-mode t)
 
 ;; Eglot - LSP Support
 (use-package eglot
@@ -124,28 +99,63 @@
   :config
   (setq help-at-pt-display-when-idle t))
 
-;; <++>
 ;; Message navigation bindings
 (with-eval-after-load 'flymake
   (define-key flymake-mode-map (kbd "C-c n") #'flymake-goto-next-error)
   (define-key flymake-mode-map (kbd "C-c p") #'flymake-goto-prev-error))
-;; <++>
 
-;; Corfu - Pop-up completion
-(use-package corfu
+;; Helm - Framework for incremental completions and narrowing selections
+(use-package helm
   :ensure t
-  :hook (prog-mode . corfu-mode)
-  :config (setq corfu-auto t))
+  :demand t
+  :bind (("M-x" . helm-M-x)
+         ("C-x r b" . helm-filtered-bookmarks)
+         ("C-x C-f" . helm-find-files)
+         ("C-c j" . helm-occur)
+         :map helm-map
+         ("<tab>" . helm-execute-persistent-action)
+         ("C-i" . helm-execute-persistent-action)
+         ("C-z" . helm-select-action)
+         ("C-j" . helm-next-line)       ; Bind C-j to move down
+         ("C-k" . helm-previous-line)   ; Bind C-k to move up
+         ("<escape>" . helm-keyboard-quit)   ; Bind Esc to quit
+         :map flymake-mode-map
+         ("C-c n" . flymake-goto-next-error)
+         ("C-c p" . flymake-goto-prev-error))
+  :config
+  (helm-mode 1))
+
+;; Helm general settings
+(setq helm-buffers-fuzzy-matching t
+      helm-recentf-fuzzy-match    t
+      helm-locate-fuzzy-match     t
+      helm-semantic-fuzzy-match   t
+      helm-imenu-fuzzy-match      t
+      helm-completion-in-region-fuzzy-match t
+      helm-candidate-number-list  50
+      helm-split-window-in-side-p t
+      helm-move-to-line-cycle-in-source t
+      helm-ff-search-library-in-sexp t
+      helm-scroll-amount 8
+      helm-ff-file-name-history-use-recentf t)
+
+;; Helm-ag for better searching
+(use-package helm-ag
+  :ensure t
+  :bind (("C-c i" . helm-imenu))
+  :config (setq helm-ag-base-command "rg --no-heading"))
+
+;; Helm-projectile
+(use-package helm-projectile
+  :ensure t
+  :config
+  (helm-projectile-on))
 
 ;; Magit - Git client
 (use-package magit
   :ensure t
   :bind ("C-c g" . magit-status)
   :config (setq magit-diff-refine-hunk t))
-
-;; Consult
-(use-package consult
-  :ensure t)
 
 ;; Diff-hl - Indication of local VCS changes
 (use-package diff-hl
@@ -249,15 +259,14 @@
   ;; Define leader keybindings
   (my-leader-def
     "f"  '(:ignore t :which-key "find")
-    "ff" '(consult-find :which-key "find file")
-    "fg" '(consult-grep :which-key "grep")
-    "fb" '(consult-buffer :which-key "buffer")
-    "fl" '(consult-line :which-key "line")
-    "fo" '(consult-outline :which-key "outline")
-    "fr" '(consult-recent-file :which-key "recent file")
-    "fi" '(consult-imenu :which-key "test")
-    "fs" '(consult-ripgrep :which-key "ripgrep")))
-
+    "ff" '(helm-find-files :which-key "find file")
+    "fg" '(helm-do-grep-ag :which-key "grep")
+    "fb" '(helm-buffers-list :which-key "buffer")
+    "fl" '(helm-occur :which-key "line")
+    "fo" '(helm-imenu :which-key "outline")
+    "fr" '(helm-recentf :which-key "recent file")
+    "fi" '(helm-imenu :which-key "imenu")
+    "fs" '(helm-do-grep-ag :which-key "search with ag")))
 
 ;; Miscellaneous options
 (setq-default major-mode

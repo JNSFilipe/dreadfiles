@@ -1,4 +1,4 @@
-;;; Personal configuration -*- lexical-binding: t -*-
+;; Emacs configuration -*- lexical-binding: t -*-
 
 ;; Save the contents of this file under ~/.emacs.d/init.el
 ;; Do not forget to use Emacs' built-in help system:
@@ -9,46 +9,101 @@
 ;; Add the NonGNU ELPA package archive
 (require 'package)
 (add-to-list 'package-archives  '("nongnu" . "https://elpa.nongnu.org/nongnu/"))
+(add-to-list 'package-archives  '("MELPA"  . "https://melpa.org/packages/"))
 (unless package-archive-contents  (package-refresh-contents))
 
-;; Load a custom theme
-;; Requires Emacs 28
-;; (load-theme 'modus-vivendi t)
+;; Install and require use-package
+;; THIS ONLY WORKS IN EMACS 29
+(require 'use-package)
+(setq use-package-always-ensure t)
 
-;; Disable the menu bar
-(menu-bar-mode -1)
-
-;; Disable the tool bar
-(tool-bar-mode -1)
-
-;; Disable the scroll bars
-(scroll-bar-mode -1)
+(dolist (mode
+         '(menu-bar-mode         ;; Disable the menu bar
+           tool-bar-mode         ;; Disable the tool bar
+           scroll-bar-mode       ;; Disable the scroll bars
+           blink-cursor-mode))   ;; Disable the blinking cursor
+  (funcall mode -1))
 
 ;; Disable splash screen
 (setq inhibit-startup-screen t)
 
-;;; Completion framework
-(unless (package-installed-p 'vertico)
-  (package-install 'vertico))
+;; For navigating wrapped lines
+(global-visual-line-mode t)
 
-;; Enable completion by narrowing
-(vertico-mode t)
+;; Doom Themes
+(use-package doom-themes
+  :ensure t
+  :config
+  ;; Load the desired theme
+  (load-theme 'doom-tokyo-night t)  ; Replace 'doom-one with your preferred theme
+  ;; Enable flashing mode-line on errors
+  (doom-themes-visual-bell-config)
+  ;; Enable custom neotree theme (all-the-icons must be installed!)
+  (doom-themes-neotree-config)
+  ;; Corrects (and improves) org-mode's native fontification.
+  (doom-themes-org-config))
 
-;; Improve directory navigation
-(with-eval-after-load 'vertico
+;; Doom Modeline
+(use-package doom-modeline
+  :ensure t
+  :init (doom-modeline-mode 1)
+  :config
+  (setq doom-modeline-height 15))
+
+;; Fonts
+(when (member "JetBrains Mono" (font-family-list))
+  (set-face-attribute 'default nil :font "JetBrains Mono-12"))
+;; Use a variable pitch, keeping fixed pitch where it's sensible
+(use-package mixed-pitch ;; For auto detecting when to use variable pitch
+  :defer t
+  :hook (text-mode . mixed-pitch-mode)
+  :config
+  (when (member "Source Serif Pro" (font-family-list))
+    (set-face-attribute 'variable-pitch nil :family "Source Serif Pro")))
+;; Pretty simbols
+(setq-default prettify-symbols-alist '(("lambda" . ?λ)
+                                       ("delta" . ?Δ)
+                                       ("gamma" . ?Γ)
+                                       ("phi" . ?φ)
+                                       ("psi" . ?ψ)))
+
+;; A startup screen extracted from Spacemacs
+(use-package dashboard
+  :config
+  (setq dashboard-projects-backend 'project-el
+        dashboard-banner-logo-title nil
+        dashboard-center-content t
+        dashboard-set-footer nil
+        dashboard-page-separator "\n\n\n"
+        dashboard-items '((projects . 15)
+                          (recents  . 15)
+                          (bookmarks . 5)))
+  (dashboard-setup-startup-hook))
+
+;; Vertico - Enable completion by narrowing
+(use-package vertico
+  :ensure t
+  :init
+  (vertico-mode t)
+  :config
   (define-key vertico-map (kbd "RET") #'vertico-directory-enter)
   (define-key vertico-map (kbd "DEL") #'vertico-directory-delete-word)
   (define-key vertico-map (kbd "M-d") #'vertico-directory-delete-char))
 
-;;; Extended completion utilities
-(unless (package-installed-p 'consult)
-  (package-install 'consult))
+;; Consult - Extended completion utilities
+(use-package consult
+  :ensure t
+  :bind (
+         :map flymake-mode-map
+         ("C-c n" . flymake-goto-next-error)
+         ("C-c p" . flymake-goto-prev-error))
+  :config
+  (setq read-buffer-completion-ignore-case t
+        read-file-name-completion-ignore-case t
+        completion-ignore-case t))
 (global-set-key [rebind switch-to-buffer] #'consult-buffer)
 (global-set-key (kbd "C-c j") #'consult-line)
 (global-set-key (kbd "C-c i") #'consult-imenu)
-(setq read-buffer-completion-ignore-case t
-      read-file-name-completion-ignore-case t
-      completion-ignore-case t)
 
 ;; Enable line numbering in `prog-mode'
 (add-hook 'prog-mode-hook #'display-line-numbers-mode)
@@ -56,130 +111,157 @@
 ;; Automatically pair parentheses
 (electric-pair-mode t)
 
-;;; LSP Support
-(unless (package-installed-p 'eglot)
-  (package-install 'eglot))
+;; Eglot - LSP Support
+(use-package eglot
+  :ensure t
+  :hook (prog-mode . eglot-ensure)
+  :init (defalias 'start-lsp-server #'eglot))
 
-;; Enable LSP support by default in programming buffers
-(add-hook 'prog-mode-hook #'eglot-ensure)
+;; Flymake - Inline static analysis
+(use-package flymake
+  :ensure t
+  :hook (prog-mode . flymake-mode)
+  :config
+  (setq help-at-pt-display-when-idle t))
 
-;; Create a memorable alias for `eglot-ensure'.
-(defalias 'start-lsp-server #'eglot)
-
-;;; Inline static analysis
-
-;; Enabled inline static analysis
-(add-hook 'prog-mode-hook #'flymake-mode)
-
-;; Display messages when idle, without prompting
-(setq help-at-pt-display-when-idle t)
-
+;; <++>
 ;; Message navigation bindings
 (with-eval-after-load 'flymake
   (define-key flymake-mode-map (kbd "C-c n") #'flymake-goto-next-error)
   (define-key flymake-mode-map (kbd "C-c p") #'flymake-goto-prev-error))
+;; <++>
 
-;;; Pop-up completion
-(unless (package-installed-p 'corfu)
-  (package-install 'corfu))
+;; Corfu - Pop-up completion
+(use-package corfu
+  :ensure t
+  :hook (prog-mode . corfu-mode)
+  :config (setq corfu-auto t))
 
-;; Enable autocompletion by default in programming buffers
-(add-hook 'prog-mode-hook #'corfu-mode)
+;; Magit - Git client
+(use-package magit
+  :ensure t
+  :bind ("C-c g" . magit-status)
+  :config (setq magit-diff-refine-hunk t))
 
-;; Enable automatic completion.
-(setq corfu-auto t)
+;; Consult
+(use-package consult
+  :ensure t)
 
-;;; Git client
-(unless (package-installed-p 'magit)
-  (package-install 'magit))
+;; Diff-hl - Indication of local VCS changes
+(use-package diff-hl
+  :ensure t
+  :hook (prog-mode . diff-hl-mode)
+  :config (diff-hl-flydiff-mode t))
 
-;; Bind the `magit-status' command to a convenient key.
-(global-set-key (kbd "C-c g") #'magit-status)
+;; Display available keybindings in popup
+(use-package which-key
+  :config
+  (which-key-mode 1))
 
-;; Show word-granularity differences within diff hunks
-(setq magit-diff-refine-hunk t)
+;; Additional language support
+(use-package go-mode
+  :ensure t)
 
-;;; Indication of local VCS changes
-(unless (package-installed-p 'diff-hl)
-  (package-install 'diff-hl))
+(use-package lua-mode
+  :ensure t)
 
-;; Enable `diff-hl' support by default in programming buffers
-(add-hook 'prog-mode-hook #'diff-hl-mode)
+(use-package rust-mode
+  :ensure t)
 
-;; Update the highlighting without saving
-(diff-hl-flydiff-mode t)
+(use-package sly
+  :ensure t)
 
-;;; Go Support
-(unless (package-installed-p 'go-mode)
-  (package-install 'go-mode))
+;; AUCTeX - LaTeX support
+(use-package auctex
+  :ensure t
+  :hook ((LaTeX-mode . LaTeX-math-mode)
+         (LaTeX-mode . reftex-mode))
+  :config
+  (setq TeX-auto-save t
+        TeX-parse-self t
+        TeX-master nil))
 
-;;; Lua Support
-(unless (package-installed-p 'lua-mode)
-  (package-install 'lua-mode))
+;; Markdown mode
+(use-package markdown-mode
+  :ensure t)
 
-;;; Rust Support
-(unless (package-installed-p 'rust-mode)
-  (package-install 'rust-mode))
+;; Org mode - Outline-based notes management and organizer
+(use-package org
+  :bind (("C-c l" . org-store-link)
+         ("C-c a" . org-agenda)))
 
-;;; Additional Lisp support
-(unless (package-installed-p 'sly)
-  (package-install 'sly))
+(use-package org-contrib
+  :ensure t)
 
-;;; LaTeX support
-(unless (package-installed-p 'auctex)
-  (package-install 'auctex))
-(setq TeX-auto-save t)
-(setq TeX-parse-self t)
-(setq-default TeX-master nil)
+;; EditorConfig support
+(use-package editorconfig
+  :ensure t
+  :config (editorconfig-mode t))
 
-;; Enable LaTeX math support
-(add-hook 'LaTeX-mode-map #'LaTeX-math-mode)
+;; EAT - In-Emacs Terminal Emulation
+(use-package eat
+  :ensure t
+  :config
+  (setq eat-kill-buffer-on-exit t
+        eat-enable-mouse t))
 
-;; Enable reference mangment
-(add-hook 'LaTeX-mode-map #'reftex-mode)
+;; Evil - Vim Emulation
+(use-package evil
+  :ensure t
+  :config
+  (evil-mode t)
+  ;;; Define costum functions to peform personalised actions
+  ;;;; Keep selection after indent
+  (defun jf/evil-shift-right ()
+  (interactive)
+    (evil-shift-right evil-visual-beginning evil-visual-end)
+    (evil-normal-state)
+    (evil-visual-restore))
+  ;;;; Keep selection after unindent
+  (defun jf/evil-shift-left ()
+    (interactive)
+    (evil-shift-left evil-visual-beginning evil-visual-end)
+    (evil-normal-state)
+    (evil-visual-restore))
+  ;;; Define shortcuts
+  (define-key evil-visual-state-map (kbd "TAB") 'jf/evil-shift-right)
+  (define-key evil-visual-state-map (kbd "<BACKTAB>") 'jf/evil-shift-left)
+  :hook (prog-mode . evil-local-mode))
 
-;;; Markdown support
-(unless (package-installed-p 'markdown-mode)
-  (package-install 'markdown-mode))
+;; Escaping evil with jj and jk
+(use-package key-chord
+  :ensure t
+  :config
+  (key-chord-mode 1)
+  (key-chord-define evil-insert-state-map "jj" 'evil-normal-state)
+  (key-chord-define evil-insert-state-map "jk" 'evil-normal-state))
 
-;;; Outline-based notes management and organizer
-(global-set-key (kbd "C-c l") #'org-store-link)
-(global-set-key (kbd "C-c a") #'org-agenda)
+;; Keybindings
+(use-package general
+  :ensure t
+  :config
+  ;; Define 'SPC' as the leader key
+  (general-create-definer my-leader-def
+    :keymaps '(normal insert visual emacs)
+    :prefix "SPC"
+    :global-prefix "C-SPC")
 
-;;; Additional Org-mode related functionality
-(unless (package-installed-p 'org-contrib)
-  (package-install 'org-contrib))
+  ;; Define leader keybindings
+  (my-leader-def
+    "f"  '(:ignore t :which-key "find")
+    "ff" '(consult-find :which-key "find file")
+    "fg" '(consult-grep :which-key "grep")
+    "fb" '(consult-buffer :which-key "buffer")
+    "fl" '(consult-line :which-key "line")
+    "fo" '(consult-outline :which-key "outline")
+    "fr" '(consult-recent-file :which-key "recent file")
+    "fi" '(consult-imenu :which-key "test")
+    "fs" '(consult-ripgrep :which-key "ripgrep")))
 
-;;; EditorConfig support
-(unless (package-installed-p 'editorconfig)
-  (package-install 'editorconfig))
-
-;; Enable EditorConfig
-(editorconfig-mode t)
-
-;;; In-Emacs Terminal Emulation
-(unless (package-installed-p 'eat)
-  (package-install 'eat))
-
-;; Close the terminal buffer when the shell terminates.
-(setq eat-kill-buffer-on-exit t)
-
-;; Enable mouse-support.
-(setq eat-enable-mouse t)
-
-;;; Vim Emulation
-(unless (package-installed-p 'evil)
-  (package-install 'evil))
-
-;; Enable Vim emulation
-(evil-mode t)
-
-;; Enable Vim emulation in programming buffers
-(add-hook 'prog-mode-hook #'evil-local-mode)
 
 ;; Miscellaneous options
 (setq-default major-mode
-              (lambda () ; guess major mode from file name
+              (lambda ()
                 (unless buffer-file-name
                   (let ((buffer-file-name (buffer-name)))
                     (set-auto-mode)))))
@@ -191,7 +273,18 @@
 (recentf-mode t)
 (defalias 'yes-or-no #'y-or-n-p)
 
-;; Store automatic customisation options elsewhere
+;; Use 2 spaces only for indentation
+(setq-default indent-tabs-mode nil)
+(setq-default tab-width 2)
+(setq indent-line-function 'insert-tab)
+
+;; Smooth scrolling - That is, scroll only one line
+(setq scroll-step            1
+  scroll-conservatively  10000)
+
+;; Store automatic customization options elsewhere
 (setq custom-file (locate-user-emacs-file "custom.el"))
 (when (file-exists-p custom-file)
   (load custom-file))
+
+;; TODO: Switch to Helm

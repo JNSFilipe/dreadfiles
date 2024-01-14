@@ -252,8 +252,16 @@
     (evil-normal-state)
     (evil-visual-restore))
   ;;; Define shortcuts
+  ;;;; Define shortcuts for indent and unindent
   (define-key evil-visual-state-map (kbd "TAB") 'jf/evil-shift-right)
   (define-key evil-visual-state-map (kbd "<BACKTAB>") 'jf/evil-shift-left)
+  ;; Unbind C-h in global map
+  (global-unset-key (kbd "C-h"))
+  ;;;; Window navigation using Ctrl + h/j/k/l
+  (define-key evil-normal-state-map (kbd "C-h") 'evil-window-left)
+  (define-key evil-normal-state-map (kbd "C-j") 'evil-window-down)
+  (define-key evil-normal-state-map (kbd "C-k") 'evil-window-up)
+  (define-key evil-normal-state-map (kbd "C-l") 'evil-window-right)
   :hook (prog-mode . evil-local-mode))
 
 ;; Escaping evil with jj and jk

@@ -31,10 +31,20 @@
 (global-visual-line-mode t)
 
 ;; Enable and use relative line numbering
+(display-line-numbers-mode)
 (setq display-line-numbers 'relative)
 
 ;; Automatically pair parentheses
 (electric-pair-mode t)
+
+;; Use 2 spaces only for indentation
+(setq-default indent-tabs-mode nil)
+(setq-default tab-width 2)
+(setq indent-line-function 'insert-tab)
+
+;; Smooth scrolling - That is, scroll only one line
+(setq scroll-step            1
+  scroll-conservatively  10000)
 
 ;; Fonts
 (when (member "JetBrains Mono" (font-family-list))
@@ -52,6 +62,10 @@
                                        ("gamma" . ?Γ)
                                        ("phi" . ?φ)
                                        ("psi" . ?ψ)))
+
+;; Install icons
+(use-package all-the-icons
+  :if (display-graphic-p))
 
 ;; Doom Themes
 (use-package doom-themes
@@ -129,10 +143,7 @@
          ("C-z" . helm-select-action)
          ("C-j" . helm-next-line)       ; Bind C-j to move down
          ("C-k" . helm-previous-line)   ; Bind C-k to move up
-         ("<escape>" . helm-keyboard-quit)   ; Bind Esc to quit
-         :map flymake-mode-map
-         ("C-c n" . flymake-goto-next-error)
-         ("C-c p" . flymake-goto-prev-error))
+         ("<escape>" . helm-keyboard-quit))   ; Bind Esc to quit
   :config
   (helm-mode 1))
 
@@ -186,6 +197,97 @@
   :config
   (which-key-mode 1))
 
+;; Keychorde -- Needed for escaping evil with jj and jk
+(use-package key-chord
+  :ensure t
+  :config
+  (key-chord-mode 1))
+
+;; Evil - Vim Emulation
+(use-package evil
+  :ensure t
+  :config
+  (evil-mode t)
+  ;;; Define costum functions to peform personalised actions
+  ;;;; Keep selection after indent
+  (defun jf/evil-shift-right ()
+  (interactive)
+    (evil-shift-right evil-visual-beginning evil-visual-end)
+    (evil-normal-state)
+    (evil-visual-restore))
+  ;;;; Keep selection after unindent
+  (defun jf/evil-shift-left ()
+    (interactive)
+    (evil-shift-left evil-visual-beginning evil-visual-end)
+    (evil-normal-state)
+    (evil-visual-restore))
+  ;;; Define shortcuts
+  ;;;; Define shortcuts for indent and unindent
+  (define-key evil-visual-state-map (kbd "TAB") 'jf/evil-shift-right)
+  (define-key evil-visual-state-map (kbd "<BACKTAB>") 'jf/evil-shift-left)
+  ;;;; Unbind C-h in global map
+  (global-unset-key (kbd "C-h"))
+  ;;;; Escape insert with jj and jk
+  (key-chord-define evil-insert-state-map "jj" 'evil-normal-state)
+  (key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
+  ;;;; Window navigation using Ctrl + h/j/k/l
+  (define-key evil-normal-state-map (kbd "C-h") 'evil-window-left)
+  (define-key evil-normal-state-map (kbd "C-j") 'evil-window-down)
+  (define-key evil-normal-state-map (kbd "C-k") 'evil-window-up)
+  (define-key evil-normal-state-map (kbd "C-l") 'evil-window-right)
+  ;;;; Make Exceptions for NeoTree
+  (evil-define-key 'normal neotree-mode-map
+    "j" 'neotree-next-line
+    "k" 'neotree-previous-line
+    "l" 'neotree-enter
+    "h" 'neotree-collapse-all
+    "m" 'neotree-rename-node
+    "d" 'neotree-delete-node
+    "c" 'neotree-copy-node
+    "a" 'neotree-create-node
+    "S-h" 'neotree-hidden-file-toggle
+    "h" 'neotree-collapse-all)
+  :hook (prog-mode . evil-local-mode))
+
+;; NeoTree - The fle tree
+(use-package neotree
+  :ensure t
+  :config
+  ;; Set up your preferred neo-tree settings here
+  (general-define-key
+    :keymaps 'neotree-mode-map
+    "j" 'neotree-next-line
+    "k" 'neotree-previous-line
+    "l" 'neotree-enter
+    "h" 'neotree-hide)
+  )
+
+;; Keybindings
+(use-package general
+  :ensure t
+  :config
+  ;; Define 'SPC' as the leader key
+  (general-create-definer my-leader-def
+    :keymaps '(normal insert visual emacs)
+    :prefix "SPC"
+    :global-prefix "C-SPC")
+  
+  ;; Leader keybinding for toggling neo-tree
+  (my-leader-def
+    "o" '(neotree-toggle :which-key "toggle neo-tree"))
+
+  ;; Define leader keybindings
+  (my-leader-def
+    "f"  '(:ignore t :which-key "find")
+    "ff" '(helm-find-files :which-key "find file")
+    "fg" '(helm-do-grep-ag :which-key "grep")
+    "fb" '(helm-buffers-list :which-key "buffer")
+    "fl" '(helm-occur :which-key "line")
+    "fo" '(helm-imenu :which-key "outline")
+    "fr" '(helm-recentf :which-key "recent file")
+    "fi" '(helm-imenu :which-key "imenu")
+    "fs" '(helm-do-grep-ag :which-key "search with ag")))
+
 ;; Additional language support
 (use-package go-mode
   :ensure t)
@@ -233,67 +335,6 @@
   (setq eat-kill-buffer-on-exit t
         eat-enable-mouse t))
 
-;; Evil - Vim Emulation
-(use-package evil
-  :ensure t
-  :config
-  (evil-mode t)
-  ;;; Define costum functions to peform personalised actions
-  ;;;; Keep selection after indent
-  (defun jf/evil-shift-right ()
-  (interactive)
-    (evil-shift-right evil-visual-beginning evil-visual-end)
-    (evil-normal-state)
-    (evil-visual-restore))
-  ;;;; Keep selection after unindent
-  (defun jf/evil-shift-left ()
-    (interactive)
-    (evil-shift-left evil-visual-beginning evil-visual-end)
-    (evil-normal-state)
-    (evil-visual-restore))
-  ;;; Define shortcuts
-  ;;;; Define shortcuts for indent and unindent
-  (define-key evil-visual-state-map (kbd "TAB") 'jf/evil-shift-right)
-  (define-key evil-visual-state-map (kbd "<BACKTAB>") 'jf/evil-shift-left)
-  ;; Unbind C-h in global map
-  (global-unset-key (kbd "C-h"))
-  ;;;; Window navigation using Ctrl + h/j/k/l
-  (define-key evil-normal-state-map (kbd "C-h") 'evil-window-left)
-  (define-key evil-normal-state-map (kbd "C-j") 'evil-window-down)
-  (define-key evil-normal-state-map (kbd "C-k") 'evil-window-up)
-  (define-key evil-normal-state-map (kbd "C-l") 'evil-window-right)
-  :hook (prog-mode . evil-local-mode))
-
-;; Escaping evil with jj and jk
-(use-package key-chord
-  :ensure t
-  :config
-  (key-chord-mode 1)
-  (key-chord-define evil-insert-state-map "jj" 'evil-normal-state)
-  (key-chord-define evil-insert-state-map "jk" 'evil-normal-state))
-
-;; Keybindings
-(use-package general
-  :ensure t
-  :config
-  ;; Define 'SPC' as the leader key
-  (general-create-definer my-leader-def
-    :keymaps '(normal insert visual emacs)
-    :prefix "SPC"
-    :global-prefix "C-SPC")
-
-  ;; Define leader keybindings
-  (my-leader-def
-    "f"  '(:ignore t :which-key "find")
-    "ff" '(helm-find-files :which-key "find file")
-    "fg" '(helm-do-grep-ag :which-key "grep")
-    "fb" '(helm-buffers-list :which-key "buffer")
-    "fl" '(helm-occur :which-key "line")
-    "fo" '(helm-imenu :which-key "outline")
-    "fr" '(helm-recentf :which-key "recent file")
-    "fi" '(helm-imenu :which-key "imenu")
-    "fs" '(helm-do-grep-ag :which-key "search with ag")))
-
 ;; Miscellaneous options
 (setq-default major-mode
               (lambda ()
@@ -308,18 +349,7 @@
 (recentf-mode t)
 (defalias 'yes-or-no #'y-or-n-p)
 
-;; Use 2 spaces only for indentation
-(setq-default indent-tabs-mode nil)
-(setq-default tab-width 2)
-(setq indent-line-function 'insert-tab)
-
-;; Smooth scrolling - That is, scroll only one line
-(setq scroll-step            1
-  scroll-conservatively  10000)
-
 ;; Store automatic customization options elsewhere
 (setq custom-file (locate-user-emacs-file "custom.el"))
 (when (file-exists-p custom-file)
   (load custom-file))
-
-;; TODO: Switch to Helm

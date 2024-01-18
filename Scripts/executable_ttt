@@ -29,9 +29,9 @@ window_settings() {
 
 handle_binds() {
   bind_tree_mode=$(tmux_option_or_fallback "@sessionx-bind-tree-mode" "ctrl-t")
-  bind_window_mode=$(tmux_option_or_fallback "@sessionx-bind-window-mode" "ctrl-w")
+  bind_window_mode=$(tmux_option_or_fallback "@sessionx-bind-window-mode" "ctrl-x")
 
-  bind_kill_session=$(tmux_option_or_fallback "@sessionx-bind-kill-session" "ctrl-x")
+  bind_kill_session=$(tmux_option_or_fallback "@sessionx-bind-kill-session" "ctrl-w")
 
   bind_exit=$(tmux_option_or_fallback "@sessionx-bind-abort" "esc")
   bind_accept=$(tmux_option_or_fallback "@sessionx-bind-accept" "enter")

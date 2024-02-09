@@ -118,16 +118,18 @@
   (define-key flymake-mode-map (kbd "C-c n") #'flymake-goto-next-error)
   (define-key flymake-mode-map (kbd "C-c p") #'flymake-goto-prev-error))
 
-;; Projectile - Project Interaction Library for Emacs
-(use-package projectile
-  :ensure t
-  :init
-  (projectile-mode +1)
-  :config
-  (setq projectile-completion-system 'helm)
-  (setq projectile-indexing-method 'alien)
-  (setq projectile-project-search-path '("~/GitHub/" "~/Documents/GitHub/" "~/.local/share"))
-  (setq projectile-enable-caching t))
+;; ;; Projectile - Project Interaction Library for Emacs
+;; (use-package projectile
+;;   :ensure t
+;;   :init
+;;   (projectile-mode +1)
+;;   :config
+;;   (setq projectile-completion-system 'helm)
+;;   (setq projectile-indexing-method 'alien)
+;;   (setq projectile-project-search-path '("~/GitHub/" "~/Documents/GitHub/" "~/.local/share"))
+;;   (setq projectile-enable-caching t))
+(require 'project)
+(mapc #'project-remember-projects-under '("~/GitHub/" "~/Documents/GitHub/" "~/.local/share"))
 
 ;; Helm - Framework for incremental completions and narrowing selections
 (use-package helm
@@ -167,18 +169,49 @@
   :bind (("C-c i" . helm-imenu))
   :config (setq helm-ag-base-command "rg --no-heading"))
 
-;; Helm-projectile
-(use-package helm-projectile
-  :ensure t
-  :after (helm projectile)
-  :config
-  (helm-projectile-on))
+;; ;; Helm-projectile
+;; (use-package helm-projectile
+;;   :ensure t
+;;   :after (helm projectile)
+;;   :config
+;;   (helm-projectile-on))
+ 
+;; tab-bar is native and required by tabspaces
+(require 'tab-bar)
+(setq tab-bar-show nil) ; Hide tab-bar
 
-;; Prespective - for a "tmux session per project"-like experience
-(use-package perspective
+(use-package tabspaces
+  ;; TODO: See consult integration
+  ;; use this next line only if you also use straight, otherwise ignore it. 
+  ;; :straight (:type git :host github :repo "mclear-tools/tabspaces")
   :ensure t
-  :config
-  (persp-mode))
+  :hook (after-init . tabspaces-mode) ;; use this only if you want the minor-mode loaded at startup. 
+  :bind ("C-a" . tabspaces-open-or-create-project-and-workspace)
+  :commands (tabspaces-switch-or-create-workspace
+             tabspaces-open-or-create-project-and-workspace)
+  :custom
+  (tabspaces-use-filtered-buffers-as-default t)
+  (tabspaces-default-tab "Default")
+  (tabspaces-remove-to-default t)
+  (tabspaces-include-buffers '("*scratch*"))
+  (tabspaces-initialize-project-with-todo t)
+  (tabspaces-todo-file-name "project-todo.org")
+  ;; sessions
+  (tabspaces-session t)
+  (tabspaces-session-auto-restore t))
+  
+;; ;; Prespective - for a "tmux session per project"-like experience
+;; (use-package perspective
+;;   :ensure t
+;;   :custom
+;;   (persp-mode-prefix-key (kbd "C-Space"))
+;;   :init
+;;   (persp-mode 1))
+
+;; hl-todo
+(use-package hl-todo
+  :ensure t
+  :config (hl-todo-mode 1))
 
 ;; Magit - Git client
 (use-package magit
@@ -271,7 +304,7 @@
     :keymaps '(normal insert visual emacs)
     :prefix "SPC"
     :global-prefix "C-SPC")
-  
+
   ;; Leader keybinding for toggling neo-tree
   (my-leader-def
     "o" '(neotree-toggle :which-key "toggle neo-tree"))
@@ -353,3 +386,4 @@
 (setq custom-file (locate-user-emacs-file "custom.el"))
 (when (file-exists-p custom-file)
   (load custom-file))
+j

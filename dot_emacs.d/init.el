@@ -31,7 +31,7 @@
 (global-visual-line-mode t)
 
 ;; Enable and use relative line numbering
-(display-line-numbers-mode)
+(global-display-line-numbers-mode 1)
 (setq display-line-numbers 'relative)
 
 ;; Automatically pair parentheses
@@ -64,8 +64,8 @@
                                        ("psi" . ?ψ)))
 
 ;; Install icons
-(use-package all-the-icons
-  :if (display-graphic-p))
+(use-package all-the-icons :if (display-graphic-p))
+(use-package nerd-icons :if (display-graphic-p))
 
 ;; Doom Themes
 (use-package doom-themes
@@ -92,6 +92,7 @@
   :config
   (setq dashboard-projects-backend 'project-el
         dashboard-banner-logo-title nil
+        dashboard-startup-banner 'logo
         dashboard-center-content t
         dashboard-set-footer nil
         dashboard-page-separator "\n\n\n"
@@ -118,16 +119,18 @@
   (define-key flymake-mode-map (kbd "C-c n") #'flymake-goto-next-error)
   (define-key flymake-mode-map (kbd "C-c p") #'flymake-goto-prev-error))
 
-;; Projectile - Project Interaction Library for Emacs
-(use-package projectile
-  :ensure t
-  :init
-  (projectile-mode +1)
-  :config
-  (setq projectile-completion-system 'helm)
-  (setq projectile-indexing-method 'alien)
-  (setq projectile-project-search-path '("~/GitHub/" "~/Documents/GitHub/" "~/.local/share"))
-  (setq projectile-enable-caching t))
+;; ;; Projectile - Project Interaction Library for Emacs
+;; (use-package projectile
+;;   :ensure t
+;;   :init
+;;   (projectile-mode +1)
+;;   :config
+;;   (setq projectile-completion-system 'helm)
+;;   (setq projectile-indexing-method 'alien)
+;;   (setq projectile-project-search-path '("~/GitHub/" "~/Documents/GitHub/" "~/.local/share"))
+;;   (setq projectile-enable-caching t))
+(require 'project)
+(mapc #'project-remember-projects-under '("~/GitHub/" "~/Documents/GitHub/" "~/.local/share/"))
 
 ;; Helm - Framework for incremental completions and narrowing selections
 (use-package helm
@@ -167,18 +170,50 @@
   :bind (("C-c i" . helm-imenu))
   :config (setq helm-ag-base-command "rg --no-heading"))
 
-;; Helm-projectile
-(use-package helm-projectile
-  :ensure t
-  :after (helm projectile)
-  :config
-  (helm-projectile-on))
+;; ;; Helm-projectile
+;; (use-package helm-projectile
+;;   :ensure t
+;;   :after (helm projectile)
+;;   :config
+;;   (helm-projectile-on))
 
-;; Prespective - for a "tmux session per project"-like experience
-(use-package perspective
+;; tab-bar is native and required by tabspaces
+(require 'tab-bar)
+(setq tab-bar-show nil) ; Hide tab-bar
+
+;;tabspaces - Prespective - for a "tmux session per project"-like experience
+(use-package tabspaces
+  ;; TODO: See consult integration
+  ;; use this next line only if you also use straight, otherwise ignore it.
+  ;; :straight (:type git :host github :repo "mclear-tools/tabspaces")
   :ensure t
-  :config
-  (persp-mode))
+  :hook (after-init . tabspaces-mode) ;; use this only if you want the minor-mode loaded at startup.
+  :bind ("C-a" . tabspaces-open-or-create-project-and-workspace)
+  :commands (tabspaces-switch-or-create-workspace
+             tabspaces-open-or-create-project-and-workspace)
+  :custom
+  (tabspaces-use-filtered-buffers-as-default t)
+  (tabspaces-default-tab "Default")
+  (tabspaces-remove-to-default t)
+  (tabspaces-include-buffers '("*scratch*"))
+  (tabspaces-initialize-project-with-todo t)
+  (tabspaces-todo-file-name "project-todo.org")
+  ;; sessions
+  (tabspaces-session t)
+  (tabspaces-session-auto-restore t))
+
+;; ;; Prespective - for a "tmux session per project"-like experience
+;; (use-package perspective
+;;   :ensure t
+;;   :custom
+;;   (persp-mode-prefix-key (kbd "C-Space"))
+;;   :init
+;;   (persp-mode 1))
+
+;; hl-todo
+(use-package hl-todo
+  :ensure t
+  :config (hl-todo-mode 1))
 
 ;; Magit - Git client
 (use-package magit
@@ -186,11 +221,23 @@
   :bind ("C-c g" . magit-status)
   :config (setq magit-diff-refine-hunk t))
 
-;; Diff-hl - Indication of local VCS changes
-(use-package diff-hl
+;; ;; Diff-hl - Indication of local VCS changes
+;; (use-package diff-hl
+;;   :ensure t
+;;   :hook (prog-mode . diff-hl-mode)
+;;   :config (diff-hl-flydiff-mode t))
+(use-package git-gutter
   :ensure t
-  :hook (prog-mode . diff-hl-mode)
-  :config (diff-hl-flydiff-mode t))
+  :config
+  (setq-default left-margin-width 1)
+  (set-window-buffer nil (current-buffer))
+  (global-git-gutter-mode 1)
+  (custom-set-variables
+   '(git-gutter:update-interval 1)
+   '(git-gutter:window-width 2)
+   '(git-gutter:modified-sign " ~ ")
+   '(git-gutter:added-sign " + ")
+   '(git-gutter:deleted-sign " - ")))
 
 ;; Display available keybindings in popup
 (use-package which-key
@@ -271,7 +318,7 @@
     :keymaps '(normal insert visual emacs)
     :prefix "SPC"
     :global-prefix "C-SPC")
-  
+
   ;; Leader keybinding for toggling neo-tree
   (my-leader-def
     "o" '(neotree-toggle :which-key "toggle neo-tree"))
@@ -348,6 +395,9 @@
 (savehist-mode t)
 (recentf-mode t)
 (defalias 'yes-or-no #'y-or-n-p)
+
+;; Sotre emacs generated files in a centralised location
+(setq backup-directory-alist '(("." . "~/.emacs_saves")))
 
 ;; Store automatic customization options elsewhere
 (setq custom-file (locate-user-emacs-file "custom.el"))

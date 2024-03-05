@@ -1,0 +1,215 @@
+# Start XDG autostart .desktop files using dex. See also
+# https://wiki.archlinux.org/index.php/XDG_Autostart
+exec --no-startup-id dex --autostart --environment i3
+
+# Theme Stuff
+set $background "#1a1b26"
+set $background_trans "#1a1b2660"
+set $background2 "#1f2335"
+set $accent1 "#7aa2f7"
+set $accent1_trans "#7aa2f760"
+set $accent2 "#2ac3de"
+set $accent3 "#bb9af7"
+set $text_color1 "#c0caf5"
+set $text_color2 "#a9b1d6"
+set $text_color3 "#3b4261"
+set $color_danger "#f7768e"
+set $color_warning "#bb7a61"
+set $color_success "#9ece6a"
+
+# Font configuration
+font pango:JetBrainsMono Nerd Font 12
+
+# Set Mod1 as the modifier
+set $mod Mod1
+
+# Set keyboard layout to pt and change caps lock to esc
+exec_always setxkbmap -layout pt -option esc:nocaps
+
+# Set touchpad settings
+exec_always xinput set-prop "ELAN1201:00 04F3:3098 Touchpad" "libinput Accel Speed" 0.6
+exec_always xinput set-prop "ELAN1201:00 04F3:3098 Touchpad" "libinput Natural Scrolling Enabled" 0
+exec_always xinput set-prop "ELAN1201:00 04F3:3098 Touchpad" "libinput Tapping Enabled" 1
+
+# Use Mouse+$mod to drag floating windows to their wanted position
+floating_modifier $mod
+
+# Default partition layout as fibonacci
+default_orientation vertical #start in opposite orientation from your monitor
+for_window [class=".*"] split toggle #toggles split at each new window
+
+# Define names for default workspaces for which we configure key bindings later on.
+# We use variables to avoid repeating the names in multiple places.
+set $ws1 "1"
+set $ws2 "2"
+set $ws3 "3"
+set $ws4 "4"
+set $ws5 "5"
+set $ws6 "6"
+set $ws7 "7"
+set $ws8 "8"
+set $ws9 "9"
+set $ws10 "10"
+
+# switch to workspace
+bindsym $mod+1 workspace number $ws1
+bindsym $mod+2 workspace number $ws2
+bindsym $mod+3 workspace number $ws3
+bindsym $mod+4 workspace number $ws4
+bindsym $mod+5 workspace number $ws5
+bindsym $mod+6 workspace number $ws6
+bindsym $mod+7 workspace number $ws7
+bindsym $mod+8 workspace number $ws8
+bindsym $mod+9 workspace number $ws9
+bindsym $mod+0 workspace number $ws10
+
+# move focused container to workspace
+bindsym $mod+Shift+1 move container to workspace number $ws1
+bindsym $mod+Shift+2 move container to workspace number $ws2
+bindsym $mod+Shift+3 move container to workspace number $ws3
+bindsym $mod+Shift+4 move container to workspace number $ws4
+bindsym $mod+Shift+5 move container to workspace number $ws5
+bindsym $mod+Shift+6 move container to workspace number $ws6
+bindsym $mod+Shift+7 move container to workspace number $ws7
+bindsym $mod+Shift+8 move container to workspace number $ws8
+bindsym $mod+Shift+9 move container to workspace number $ws9
+bindsym $mod+Shift+0 move container to workspace number $ws10
+
+# change focus
+bindsym $mod+h focus left
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
+
+# alternatively, you can use the cursor keys:
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
+
+# move tiling windows via drag & drop by left-clicking into the title bar,
+# or left-clicking anywhere into the window while holding the floating modifier.
+tiling_drag modifier titlebar
+
+# Start a terminal (WezTerm)
+bindsym $mod+Return exec wezterm
+
+# toggle sticky
+bindsym $mod+Shift+s sticky toggle
+
+# enter fullscreen mode for the focused container
+bindsym Mod1+f fullscreen toggle
+
+# Go to the previous visited workspace
+bindsym $mod+Tab workspace back_and_forth
+
+# Dmenu
+bindsym $mod+d exec dmenu_extended_run
+
+# Gaps
+gaps inner 15
+gaps outer 0
+
+# Smart gaps
+smart_gaps on
+
+# Smart borders (border is not shown if only one window is present)
+smart_borders on
+
+## WINDOW RULES ##
+
+# Remove window titles
+for_window [class=".*"] border pixel 1
+
+# Scratchpad configuration
+bindsym $mod+space scratchpad show
+exec --no-startup-id wezterm start --class=Quake
+for_window [class="Quake"] move scratchpad
+
+# Start Emacs on workspace 1
+assign [class="Emacs"] $ws1
+exec --no-startup-id emacs
+
+# Start Opera on workspace 2
+assign [class="Opera"] $ws2
+exec --no-startup-id opera
+
+# Start GitHub Desktop on workspace 3
+assign [class="GitHub Desktop"] $ws3
+exec --no-startup-id github-desktop
+
+## END ##
+
+# Keybinding to exit i3 (logs you out of your X session)
+bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
+
+# Brightness controls
+bindsym XF86MonBrightnessDown exec brightnessctl set 5%-
+bindsym XF86MonBrightnessUp exec brightnessctl set +5%
+
+# Volume controls
+bindsym XF86AudioRaiseVolume exec pactl set-sink-volume @DEFAULT_SINK@ +5%
+bindsym XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -5%
+bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
+
+# Keybinding to kill focused window
+bindsym $mod+q kill
+
+# Keybinding to restart i3 inplace (preserves your layout/session, can be used to reload the config)
+bindsym $mod+Shift+r restart
+
+# resize window (you can also use the mouse for that)
+mode "resize" {
+        # These bindings trigger as soon as you enter the resize mode
+        bindsym h resize shrink width 10 px or 10 ppt
+        bindsym j grow height 10 px or 10 ppt
+        bindsym k resize shrink height 10 px or 10 ppt
+        bindsym l resize grow width 10 px or 10 ppt
+
+        # same bindings, but for the arrow keys
+        bindsym Left        resize shrink width 10 px or 10 ppt
+        bindsym Down        resize grow height 10 px or 10 ppt
+        bindsym Up          resize shrink height 10 px or 10 ppt
+        bindsym Right       resize grow width 10 px or 10 ppt
+
+        # back to normal: Enter or Escape or Mod1+r
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+        bindsym $mod+r mode "default"
+}
+
+bindsym $mod+r mode "resize"
+
+# Start i3bar to display a workspace bar (plus system information)
+# bar {
+#     position top
+#     status_command i3status
+# }
+
+# bar {
+#         bindsym button1 nop
+#         status_command i3blocks
+#         i3bar_command i3bar --transparency
+#         position top
+#         separator_symbol "‎"
+#         strip_workspace_numbers yes
+#         colors {
+#                 background $background_trans
+#                 statusline $accent1
+#
+#                 #class                  border                  bg                      text
+#                 focused_workspace       $accent1                $accent1                $background
+#                 active_workspace        $accent1                $background_trans       $accent1
+#                 inactive_workspace      $background             $background             $text_color2
+#                 urgent_workspace        $color_danger           $color_danger           $text_color1
+#                 binding_mode            $color_danger           $color_danger           $background
+#         }
+# }
+
+# Autostart applications
+exec --no-startup-id dunst
+exec --no-startup-id ~/.config/polybar/launch.sh
+exec --no-startup-id feh --bg-scale ~/.config/wallpapers/tokyonight.png
+exec --no-startup-id i3-msg "exec flameshot"
+exec --no-startup-id blueman-applet
+exec --no-startup-id nm-applet

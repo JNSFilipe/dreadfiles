@@ -3,7 +3,8 @@ local config = {}
 
 -- Set theme
 -- config.color_scheme = "Catppuccin Mocha"
-config.color_scheme = "Oxocarbon Dark"
+-- config.color_scheme = "Oxocarbon Dark"
+config.color_scheme = "tokyonight_night"
 config.window_background_opacity = 0.9
 
 -- Config Fonts

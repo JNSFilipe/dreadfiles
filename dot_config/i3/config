@@ -110,6 +110,8 @@ bindsym $mod+d exec dmenu_extended_run
 gaps inner 15
 gaps outer 0
 
+bindsym $mod+s layout toggle tabbed splitv
+
 # Smart gaps
 smart_gaps on
 
@@ -123,6 +125,7 @@ for_window [class=".*"] border pixel 1
 
 # Scratchpad configuration
 bindsym $mod+space scratchpad show
+bindsym $mod+Shift+space move scratchpad
 exec --no-startup-id wezterm start --class=Quake
 for_window [class="Quake"] move scratchpad
 
@@ -138,6 +141,10 @@ exec --no-startup-id opera
 assign [class="GitHub Desktop"] $ws3
 exec --no-startup-id github-desktop
 
+# Start Obsidian on workspace 4
+assign [class="obsidian"] $ws4
+exec --no-startup-id obsidian
+
 ## END ##
 
 # Keybinding to exit i3 (logs you out of your X session)
@@ -151,6 +158,9 @@ bindsym XF86MonBrightnessUp exec brightnessctl set +5%
 bindsym XF86AudioRaiseVolume exec pactl set-sink-volume @DEFAULT_SINK@ +5%
 bindsym XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -5%
 bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
+
+# Print screen
+bindsym Print exec "flameshot gui"
 
 # Keybinding to kill focused window
 bindsym $mod+q kill
@@ -179,32 +189,6 @@ mode "resize" {
 }
 
 bindsym $mod+r mode "resize"
-
-# Start i3bar to display a workspace bar (plus system information)
-# bar {
-#     position top
-#     status_command i3status
-# }
-
-# bar {
-#         bindsym button1 nop
-#         status_command i3blocks
-#         i3bar_command i3bar --transparency
-#         position top
-#         separator_symbol "‎"
-#         strip_workspace_numbers yes
-#         colors {
-#                 background $background_trans
-#                 statusline $accent1
-#
-#                 #class                  border                  bg                      text
-#                 focused_workspace       $accent1                $accent1                $background
-#                 active_workspace        $accent1                $background_trans       $accent1
-#                 inactive_workspace      $background             $background             $text_color2
-#                 urgent_workspace        $color_danger           $color_danger           $text_color1
-#                 binding_mode            $color_danger           $color_danger           $background
-#         }
-# }
 
 # Autostart applications
 exec --no-startup-id dunst

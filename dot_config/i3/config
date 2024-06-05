@@ -98,13 +98,15 @@ bindsym $mod+Return exec wezterm
 bindsym $mod+Shift+s sticky toggle
 
 # enter fullscreen mode for the focused container
-bindsym Mod1+f fullscreen toggle
+bindsym $mod+f fullscreen toggle
 
 # Go to the previous visited workspace
 bindsym $mod+Tab workspace back_and_forth
 
 # Dmenu
-bindsym $mod+d exec dmenu_extended_run
+for_window [class="FZFlauncher"] floating enable
+bindsym $mod+d exec fzflauncher
+bindsym Mod4+Return exec wezterm
 
 # Gaps
 gaps inner 15
@@ -134,8 +136,8 @@ assign [class="Emacs"] $ws1
 exec --no-startup-id emacs
 
 # Start Opera on workspace 2
-assign [class="Opera"] $ws2
-exec --no-startup-id opera
+assign [class="firefox"] $ws2
+exec --no-startup-id firefox
 
 # Start GitHub Desktop on workspace 3
 assign [class="GitHub Desktop"] $ws3

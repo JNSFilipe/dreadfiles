@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Check if wezterm is installed
+if ! command -v wezterm &> /dev/null; then
+    echo "Error: wezterm is not installed. Please install wezterm to use this script."
+    exit 1
+fi
+
+# Check if fzf is installed
+if ! command -v fzf &> /dev/null; then
+    echo "Error: fzf is not installed. Please install fzf to use this script."
+    exit 1
+fi
+
+# Check if lnch is installed
+if ! command -v lnch &> /dev/null; then
+    echo "Error: lnch is not installed. Please install lnch to use this script."
+    exit 1
+fi
+
+
+wezterm start -- bash -c "compgen -c | sort -u | fzf | xargs lnch"
+

@@ -19,5 +19,5 @@ if ! command -v lnch &> /dev/null; then
 fi
 
 
-wezterm start -- bash -c "compgen -c | sort -u | fzf | xargs lnch"
+wezterm start --class=FZFlauncher bash -c "compgen -c | sort -u | fzf | xargs lnch"
 

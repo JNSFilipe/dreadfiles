@@ -105,8 +105,7 @@ bindsym $mod+Tab workspace back_and_forth
 
 # Dmenu
 for_window [class="FZFlauncher"] floating enable
-bindsym $mod+d exec fzflauncher
-bindsym Mod4+Return exec wezterm
+bindsym $mod+d exec kitty --class FZFlauncher fzflauncher
 
 # Gaps
 gaps inner 15

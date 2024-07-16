@@ -1,5 +1,5 @@
 # Load Oh My Posh
-eval "$(oh-my-posh init zsh --config ~/.config/bash_theme.omp.json)"
+# eval "$(oh-my-posh init zsh --config ~/.config/bash_theme.omp.json)"
 
 # Check if it is linux to add Homebrew to path
 if [  -n "$(uname -a | grep Ubuntu)" ]; then
@@ -10,8 +10,8 @@ fi
 
 # Setup zsh history
 HISTFILE=~/.zsh_history
-HISTSIZE=100000
-SAVEHIST=100000
+HISTSIZE=10000000
+SAVEHIST=10000000
 setopt appendhistory
 
 # Load/install znap
@@ -32,6 +32,22 @@ znap source marlonrichert/zsh-autocomplete
 
 # Better zsh autocompletion
 znap source zsh-users/zsh-autosuggestions
+
+# Use pure pormpt if starship not installed; starship otherwise
+if ! type "starship" > /dev/null; then
+    # Starshipt not installed; install and setup pure prompt
+    # Install and setup pure prompt
+    fpath+=($HOME/.znap/sindresorhus/pure) # Load necessary functions (this wont work on first install)
+    znap source sindresorhus/pure # Pull the repository from github
+    autoload -U promptinit; promptinit # Recommended on README
+    zstyle :prompt:pure:prompt:success color green
+    zstyle :prompt:pure:prompt:error color red
+    zstyle :prompt:pure:git:stash show yes
+    prompt pure # Recommended on README
+else
+    # Starshipt installed; Setup starship
+    eval "$(starship init zsh)"
+fi
 
 # Setup zoxide
 eval "$(zoxide init zsh)"
@@ -64,7 +80,3 @@ alias gl='git clone'
 # Source OCaml
 # opam configuration
 [[ ! -r ~/.opam/opam-init/init.zsh ]] || source ~/.opam/opam-init/init.zsh  > /dev/null 2> /dev/null
-
-# Source rust
-. "$HOME/.cargo/env"
-

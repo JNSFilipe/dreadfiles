@@ -64,6 +64,7 @@ if [ -z "$TMUX" ]; then
 fi
 
 # Alias
+alias em='emacs -init-directory ~/.vemacs.d -nw'
 alias ls='eza --icons'
 alias la='eza --icons -A'
 alias ll='eza --icons -al'

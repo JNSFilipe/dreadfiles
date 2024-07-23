@@ -34,6 +34,9 @@ PATH=$PATH:~/Scripts/
 HISTSIZE=
 HISTFILESIZE=
 
+# setup fzf integration
+eval "$(fzf --bash)"
+
 # my aliases
 alias ww='wget'
 alias vi='nvim'
@@ -58,8 +61,6 @@ export FZF_DEFAULT_OPTS='
 
 source "$HOME/.config/fzf-tab-completion/bash/fzf-bash-completion.sh"
 bind -x '"\t": fzf_bash_completion'
-
-. "$HOME/.cargo/env"
 
 # Check if zsh and oh-my-posh exist
 if command_exists zsh && command_exists oh-my-posh; then

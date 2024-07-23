@@ -24,7 +24,7 @@ source ~/.znap/znap/znap.zsh  # Start Znap
 autoload -Uz compinit # https://unix.stackexchange.com/questions/339954/zsh-command-not-found-compinstall-compinit-compdef
 compinit
 
-# fsf autocompletion
+# fzf autocompletion
 znap source Aloxaf/fzf-tab
 
 # Fish like gohst autocompletion
@@ -48,6 +48,9 @@ else
     # Starshipt installed; Setup starship
     eval "$(starship init zsh)"
 fi
+
+# fzf integration
+source <(fzf --zsh)
 
 # Setup zoxide
 eval "$(zoxide init zsh)"

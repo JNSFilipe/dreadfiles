@@ -11,8 +11,13 @@ fi
 # Setup zsh history
 HISTFILE=~/.zsh_history
 HISTSIZE=10000000
-SAVEHIST=10000000
+SAVEHIST=$HISTSIZE
+HISTDUP=erase # Erase duplicates in history
 setopt appendhistory
+setopt sharehistory # Share history between running sessions
+setopt hist_ignore_all_dups # Ignore all duplicates in history
+setopt hist_save_no_dups # Do not save duplicates in history
+setopt hist_ignore_dups # Ignore duplicates in history
 
 # Load/install znap
 [[ -r ~/.znap/znap/znap.zsh ]] ||
@@ -51,6 +56,7 @@ fi
 
 # fzf integration
 source <(fzf --zsh)
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza --icons $realpath'
 
 # Setup zoxide
 eval "$(zoxide init zsh)"

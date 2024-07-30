@@ -5,11 +5,72 @@ command_exists () {
     type "$1" &> /dev/null ;
 }
 
+# Bootstrap bash-it if not already installed
+if [ ! -d "$HOME/.bash_it" ]; then
+
+    # If not running interactively, don't do anything
+    case $- in
+        *i*) ;;
+        *) return;;
+    esac
+
+    echo "Installing bash-it..."
+    git clone --depth=1 https://github.com/Bash-it/bash-it.git "$HOME/.bash_it"
+    "$HOME/.bash_it/install.sh" --silent --no-modify-config
+
+    echo "bash-it installation completed."
+
+    # Define simpler shell, case oh-my-posh is not found
+    PS1='\n\[\e[36m\](\[\e[93;2m\]\s\[\e[0;36m\]) (\[\e[91;1m\]\u\[\e[22m\]@\[\e[1m\]\H\[\e[0;36m\]) (\[\e[94;1m\]\w\[\e[0;36m\]) (\[\e[35;2m\]$(git branch 2>/dev/null | grep '"'"'*'"'"' | colrm 1 2)\[\e[0;36m\])\n\[\e[1m\]λ \[\e[0m\]'
+else
+
+    # If not running interactively, don't do anything
+    case $- in
+        *i*) ;;
+        *) return;;
+    esac
+
+    # Path to the bash it configuration
+    export BASH_IT="${HOME}/.bash_it"
+
+    # Lock and Load a custom theme file.
+    # Leave empty to disable theming.
+    # export BASH_IT_THEME='bobby'
+    export BASH_IT_THEME='easy'
+
+    # Don't check mail when opening terminal.
+    unset MAILCHECK
+
+    # Change this to your console based IRC client of choice.
+    export IRC_CLIENT='irssi'
+
+    # Set this to the command you use for todo.txt-cli
+    export TODO="t"
+
+    # Set this to the location of your work or project folders
+    BASH_IT_PROJECT_PATHS="${HOME}/Documents/GitHub"
+
+    # Set this to false to turn off version control status checking within the prompt for all themes
+    export SCM_CHECK=true
+
+    export BASH_IT_COMMAND_DURATION=true
+    export COMMAND_DURATION_MIN_SECONDS=5
+
+    # Load Bash It
+    source "$BASH_IT"/bash_it.sh
+
+    # Plugins
+    bash-it enable plugin ssh
+    bash-it enable plugin fzf
+    bash-it enable plugin todo
+    bash-it enable plugin tmux
+    bash-it enable plugin zoxide
+    bash-it enable plugin virtualenv
+fi
+
 # Define capslock  as nabla (https://www.emacswiki.org/emacs/CapsKey#toc5)
 [[ -f ~/.Xmodmap ]] && xmodmap ~/.Xmodmap
 
-# Define simpler shell, case oh-my-posh is not found
-PS1='\n\[\e[36m\](\[\e[93;2m\]\s\[\e[0;36m\]) (\[\e[91;1m\]\u\[\e[22m\]@\[\e[1m\]\H\[\e[0;36m\]) (\[\e[94;1m\]\w\[\e[0;36m\]) (\[\e[35;2m\]$(git branch 2>/dev/null | grep '"'"'*'"'"' | colrm 1 2)\[\e[0;36m\])\n\[\e[1m\]λ \[\e[0m\]'
 
 # Check if it is linux to add Homebrew to path
 if [  -n "$(uname -a | grep Ubuntu)" ]; then
@@ -31,21 +92,27 @@ PATH=$PATH:~/.cargo/bin
 PATH=$PATH:~/Scripts/
 
 # bash history
-HISTSIZE=
+HISTSIZE=10000000
 HISTFILESIZE=
 
 # setup fzf integration
-eval "$(fzf --bash)"
+if command_exists zoxide; then
+    eval "$(fzf --bash)"
+fi
 
-# my aliases
+# setup zoxide integration
+if command_exists zoxide; then
+    eval "$(zoxide init bash)"
+fi
+
+# Alias
+alias em='emacs -init-directory ~/.vemacs.d -nw'
 alias ww='wget'
 alias vi='nvim'
 alias vim='nvim'
 alias del='sudo rm -r'
 alias comp='sudo make install'
 alias gl='git clone'
-alias update='sudo apt update && sudo apt upgrade'
-alias instal='sudo apt install'
 
 # youtube-dl to download stuffs
 alias yt='youtube-dl --extract-audio --add-metadata --xattrs --embed-thumbnail --audio-quality 0 --audio-format mp3'
@@ -59,10 +126,10 @@ export FZF_DEFAULT_OPTS='
   --border
   --color border:#A6E3A1'
 
-source "$HOME/.config/fzf-tab-completion/bash/fzf-bash-completion.sh"
-bind -x '"\t": fzf_bash_completion'
+# source "$HOME/.config/fzf-tab-completion/bash/fzf-bash-completion.sh"
+# bind -x '"\t": fzf_bash_completion'
 
 # Check if zsh and oh-my-posh exist
-if command_exists zsh && command_exists oh-my-posh; then
+if command_exists zsh; then
     zsh
 fi

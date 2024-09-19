@@ -135,16 +135,18 @@ assign [class="Emacs"] $ws1
 exec --no-startup-id emacs
 
 # Start Opera on workspace 2
-assign [class="firefox"] $ws2
-exec --no-startup-id firefox
+assign [class="zen-alpha"] $ws2
+exec --no-startup-id zen-browser
+# assign [class="firefox"] $ws2
+# exec --no-startup-id firefox
 
 # Start GitHub Desktop on workspace 3
-assign [class="GitHub Desktop"] $ws3
-exec --no-startup-id github-desktop
+# assign [class="GitHub Desktop"] $ws3
+# exec --no-startup-id github-desktop
 
 # Start Obsidian on workspace 4
-assign [class="obsidian"] $ws4
-exec --no-startup-id obsidian
+# assign [class="obsidian"] $ws4
+# exec --no-startup-id obsidian
 
 ## END ##
 

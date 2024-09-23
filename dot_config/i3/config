@@ -22,6 +22,11 @@ font pango:JetBrainsMono Nerd Font 12
 
 # Set Mod1 as the modifier
 set $mod Mod1
+set $altmod Mod4
+
+# Default apps
+set $browser zen-browser
+set $term wezterm
 
 # Set keyboard layout to pt and change caps lock to esc
 exec_always setxkbmap -layout pt -option esc:nocaps
@@ -91,8 +96,9 @@ bindsym $mod+Shift+l move right
 # or left-clicking anywhere into the window while holding the floating modifier.
 tiling_drag modifier titlebar
 
-# Start a terminal (WezTerm)
-bindsym $mod+Return exec wezterm
+# Start a terminal
+bindsym $mod+Return exec $term
+bindsym $mod+Shift+Return exec EMACS_MODE="terminal" emacs --eval "(eshell)"
 
 # toggle sticky
 bindsym $mod+Shift+s sticky toggle
@@ -105,8 +111,9 @@ bindsym $mod+Tab workspace back_and_forth
 
 # Dmenu
 for_window [class="FZFlauncher"] floating enable
+for_window [title="Alfred"] floating enable
 bindsym $mod+d exec kitty --class FZFlauncher fzflauncher
-
+bindsym $mod+Shift+d fullscreen disable; exec emacs --eval "(call-interactively (quote alfred2))"
 # Gaps
 gaps inner 15
 gaps outer 0
@@ -127,18 +134,19 @@ for_window [class=".*"] border pixel 1
 # Scratchpad configuration
 bindsym $mod+space scratchpad show
 bindsym $mod+Shift+space move scratchpad
-exec --no-startup-id wezterm start --class=Quake
-for_window [class="Quake"] move scratchpad
+# exec --no-startup-id wezterm start --class=Quake
+# for_window [class="Quake"] move scratchpad
+exec --no-startup-id EMACS_MODE="quake" emacs --eval "(eshell)"
+for_window [title="Quake"] move scratchpad
 
 # Start Emacs on workspace 1
-assign [class="Emacs"] $ws1
-exec --no-startup-id emacs
+# assign [class="Emacs"] $ws1
+# exec --no-startup-id emacs
+exec --no-startup-id i3-msg 'workspace 1; exec emacs'
 
 # Start Opera on workspace 2
 assign [class="zen-alpha"] $ws2
-exec --no-startup-id zen-browser
-# assign [class="firefox"] $ws2
-# exec --no-startup-id firefox
+exec --no-startup-id $browser
 
 # Start GitHub Desktop on workspace 3
 # assign [class="GitHub Desktop"] $ws3
@@ -192,6 +200,14 @@ mode "resize" {
 }
 
 bindsym $mod+r mode "resize"
+
+# Launch apps
+bindsym $altmod+c exec emacs
+bindsym $altmod+e exec EMACS_MODE="dired" emacs .
+bindsym $altmod+Shift+e exec thunar
+bindsym $altmod+w exec nm-applet
+bindsym $altmod+b exec $browser
+bindsym $altmod+Shift+b exec blueman-manager
 
 # Autostart applications
 exec --no-startup-id dunst
